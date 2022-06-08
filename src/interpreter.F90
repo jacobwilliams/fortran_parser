@@ -184,16 +184,20 @@ contains
     integer, intent(inout) :: funcstackn
     real(fdp), intent(in) :: number
     integer, intent(in) :: command
+
     type(cachefn) :: tmpstack
+    integer :: n  !! current size of `funcstack%numbers`
 
     funcstackn = funcstackn + 1
 
-    if (funcstackn >= size(funcstack%numbers)) then
+    n = size(funcstack%numbers)
+
+    if (funcstackn >= n) then
        allocate(tmpstack%numbers(funcstackn+5), tmpstack%commands(funcstackn+5))
-       tmpstack%numbers(:funcstackn-1) = funcstack%numbers
-       tmpstack%commands(:funcstackn-1) = funcstack%commands
-       tmpstack%numbers(funcstackn:) = 0.0d0
-       tmpstack%commands(funcstackn:) = end_
+       tmpstack%numbers(1:n) = funcstack%numbers
+       tmpstack%commands(1:n) = funcstack%commands
+       tmpstack%numbers(n+1:) = 0.0d0
+       tmpstack%commands(n+1:) = end_
        deallocate(funcstack%numbers, funcstack%commands)
        funcstack%numbers => tmpstack%numbers
        funcstack%commands => tmpstack%commands
